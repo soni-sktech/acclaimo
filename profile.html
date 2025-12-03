@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Acclaimo – Profile Setup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: radial-gradient(circle at top, #0a1a3c, #001f54, #003b73, #0a2342);
+  overflow: hidden;
+}
+
+/* Stars */
+.star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: twinkle 3s infinite ease-in-out, drift 18s linear infinite;
+}
+@keyframes twinkle {
+  0%, 100% {opacity: 0.15;}
+  50% {opacity: 1;}
+}
+@keyframes drift {
+  0%   { transform: translateY(20px); }
+  100% { transform: translateY(-40px); }
+}
+
+/* Profile Glass Card */
+.box {
+  width: 420px;
+  padding: 28px;
+  background: rgba(255,255,255,0.10);
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 0 32px rgba(0,0,0,0.7);
+  z-index: 1;
+}
+
+.logo {
+  text-align: center;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  text-shadow: 0 0 14px rgba(255,255,255,0.8);
+}
+
+/* Profile Pic */
+.profile-pic-box {
+  text-align: center;
+  margin-bottom: 14px;
+}
+.profile-pic {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.7);
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  margin: 9px 0;
+  background: rgba(255,255,255,0.13);
+  color: white;
+}
+textarea { height: 70px; }
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #007bff, #4dafff);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:hover{ transform: scale(1.03); }
+
+</style>
+</head>
+
+<body>
+
+<script>
+// Restrict access if not logged in
+if(localStorage.getItem("acclaimo_logged_in") !== "true"){
+  window.location.href = "login.html";
+}
+
+// stars
+for(let i=0; i<55; i++){
+  let s=document.createElement("div");
+  s.className="star";
+  s.style.left=Math.random()*100+"%";
+  s.style.top=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*2+"s";
+  document.body.appendChild(s);
+}
+
+let currentUser = JSON.parse(localStorage.getItem("acclaimo_current_user") || "{}");
+
+// AUTO-FILL EXISTING PROFILE DATA
+document.addEventListener("DOMContentLoaded", () => {
+  if(currentUser.profile){
+    document.getElementById("p_name").value = currentUser.profile.name || "";
+    document.getElementById("p_age").value = currentUser.profile.age || "";
+    document.getElementById("p_branch").value = currentUser.profile.branch || "";
+    document.getElementById("p_sem").value = currentUser.profile.sem || "";
+    document.getElementById("p_roll").value = currentUser.profile.rollNo || "";
+    document.getElementById("p_collegeId").value = currentUser.profile.collegeId || "";
+    document.getElementById("p_bio").value = currentUser.profile.bio || "";
+    document.getElementById("p_skills").value = currentUser.profile.skills || "";
+    if(currentUser.profile.profilePic){
+      document.getElementById("profileImg").src = currentUser.profile.profilePic;
+    }
+  }
+});
+
+function previewPic(event) {
+  const img = document.getElementById("profileImg");
+  img.src = URL.createObjectURL(event.target.files[0]);
+}
+
+// SAVE FUNCTION
+function saveProfile(){
+  const name = document.getElementById("p_name").value.trim();
+  const age = document.getElementById("p_age").value.trim();
+  const branch = document.getElementById("p_branch").value.trim();
+  const sem = document.getElementById("p_sem").value.trim();
+  const rollNo = document.getElementById("p_roll").value.trim();
+  const collegeId = document.getElementById("p_collegeId").value.trim();
+  const bio = document.getElementById("p_bio").value.trim();
+  const skills = document.getElementById("p_skills").value.trim();
+  const picFile = document.getElementById("picUpload").files[0];
+
+  if(!name || !age || !branch || !sem || !rollNo || !collegeId){
+    alert("Please fill all required fields!");
+    return;
+  }
+
+  function finalizeUpdate(picData=null){
+  currentUser.profile = {
+    name,
+    age,
+    branch,
+    sem,
+    rollNo,
+    collegeId,
+    bio,
+    skills,
+    profilePic: picData || (currentUser.profile ? currentUser.profile.profilePic : "")
+  };
+
+  let all = JSON.parse(localStorage.getItem("acclaimo_users") || "[]");
+  const idx = all.findIndex(u => u.email === currentUser.email);
+  if(idx !== -1) all[idx] = currentUser;
+
+  localStorage.setItem("acclaimo_users", JSON.stringify(all));
+  localStorage.setItem("acclaimo_current_user", JSON.stringify(currentUser));
+
+  // SHOW APPROVAL MODAL
+  document.getElementById("approvalModal").style.display = "flex";
+
+  // Auto redirect after 10 seconds
+  setTimeout(() => {
+    window.location.href = "home.html";
+  }, 10000);
+}
+
+
+  if(picFile){
+    const reader = new FileReader();
+    reader.onload = () => finalizeUpdate(reader.result);
+    reader.readAsDataURL(picFile);
+  } else {
+    finalizeUpdate();
+  }
+}
+</script>
+
+
+<div class="box">
+  <div class="logo">Acclaimo</div>
+
+  <div class="profile-pic-box">
+    <img id="profileImg" class="profile-pic" src="">
+    <input type="file" id="picUpload" accept="image/*" onchange="previewPic(event)">
+  </div>
+
+  <input type="text" id="p_name" placeholder="Full Name">
+  <input type="number" id="p_age" placeholder="Age">
+  <input type="text" id="p_branch" placeholder="Branch (e.g. CSE)">
+  <input type="text" id="p_sem" placeholder="Semester (e.g. 5th)">
+  <input type="text" id="p_roll" placeholder="University Roll Number">
+  <input type="text" id="p_collegeId" placeholder="College Unique ID">
+  <textarea id="p_bio" placeholder="Short Bio (max 150 chars)"></textarea>
+  <input type="text" id="p_skills" placeholder="Skills / Interests (comma separated)">
+
+  <button onclick="saveProfile()">Save Profile</button>
+</div>
+<!-- APPROVAL POPUP -->
+<div id="approvalModal" style="
+  display:none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+">
+  <div style="
+    width: 330px;
+    padding: 22px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.25);
+    box-shadow: 0 0 25px rgba(0,0,0,0.7);
+    text-align:center;
+  ">
+    <h2 style="margin-bottom:8px; color:#bcd4ff;">
+      Profile Created 🎉
+    </h2>
+    <p style="font-size:14px;">
+      Your profile has been created successfully.<br><br>
+      Kindly wait for your college to approve this login.
+      <br><br>
+      (Redirecting to home in <b>10 seconds…</b>)
+    </p>
+  </div>
+</div>
+
+
+</body>
+</html>

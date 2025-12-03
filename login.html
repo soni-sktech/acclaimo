@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Acclaimo – Login</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at top, #0a1a3c, #001f54, #003b73, #0a2342);
+    overflow: hidden;
+  }
+
+  /* Galaxy particles */
+  .star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 3s infinite ease-in-out, drift 18s linear infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% {opacity: 0.15;}
+    50% {opacity: 1;}
+  }
+  @keyframes drift {
+    0%   { transform: translateY(20px); }
+    100% { transform: translateY(-40px); }
+  }
+
+  .login-box {
+    width: 350px;
+    padding: 30px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 0 28px rgba(0,0,0,0.6);
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.2);
+    animation: fadeIn 0.8s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    z-index: 1;
+  }
+
+  .login-box:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 40px rgba(0,0,0,0.9);
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(30px);}
+    to   {opacity: 1; transform: translateY(0);}
+  }
+
+  .logo {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    letter-spacing: 1.2px;
+    text-shadow: 0 0 8px rgba(255,255,255,0.5);
+    animation: glowLogo 2.3s ease-in-out infinite;
+  }
+
+  @keyframes glowLogo {
+    0%,100% { text-shadow: 0 0 8px rgba(255,255,255,0.4); }
+    50%     { text-shadow: 0 0 22px rgba(129,212,250,0.9); }
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin: 10px 0;
+    background: rgba(255,255,255,0.14);
+    color: white;
+    outline: none;
+  }
+  input::placeholder {
+    color: #bcd4ff;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    margin-top: 10px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #007bff, #4dafff);
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    animation: pulseBtn 2.5s ease-in-out infinite;
+    transform-origin: center;
+  }
+  button:hover {
+    transform: scale(1.03);
+  }
+
+  @keyframes pulseBtn {
+    0%,100% { box-shadow: 0 0 0 rgba(77,175,255,0); }
+    50%     { box-shadow: 0 0 20px rgba(77,175,255,0.8); }
+  }
+
+  .bottom-links {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #d0e8ff;
+  }
+  .bottom-links a {
+    color: #ffda7b;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .bottom-links a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+
+<body>
+
+<script>
+for(let i = 0; i < 55; i++){
+  const star = document.createElement("div");
+  star.classList.add("star");
+  star.style.left = Math.random() * 100 + "%";
+  star.style.top = Math.random() * 100 + "%";
+  star.style.animationDelay = Math.random() * 3 + "s";
+  document.body.appendChild(star);
+}
+</script>
+
+<div class="login-box">
+  <div class="logo">Acclaimo</div>
+
+  <input type="email" placeholder="Email">
+  <input type="password" placeholder="Password">
+
+  <!-- Login redirect to HOME -->
+  <button onclick="handleLogin()">
+    Login
+  </button>
+
+  <div class="bottom-links" style="margin-top:12px;">
+    Don’t have an account?
+    <a href="signup.html">Create one</a>
+  </div>
+</div>
+
+<script>
+function handleLogin() {
+  const email = document.querySelector('input[type="email"]').value.trim();
+  const password = document.querySelector('input[type="password"]').value.trim();
+
+  let acclaimoUsers = JSON.parse(localStorage.getItem('acclaimo_users') || '[]');
+
+  const user = acclaimoUsers.find(
+    u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+  );
+
+  if (!user) {
+    alert("Incorrect email or password ❌");
+    return;
+  }
+
+  // Store login state
+  localStorage.setItem("acclaimo_logged_in", "true");
+  localStorage.setItem("acclaimo_current_user", JSON.stringify(user));
+
+  // If profile not created, go to Profile Setup
+  if (!user.profile) {
+    window.location.href = "profile.html";
+  } else {
+    window.location.href = "home.html";
+  }
+}
+</script>
+
+
+</body>
+</html>

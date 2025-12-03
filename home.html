@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Acclaimo – Home</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: radial-gradient(circle at top, #0a1a3c, #001f54, #003b73, #0a2342);
+    color: white;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .star{position:absolute;width:2px;height:2px;background:white;opacity:.9;border-radius:50%;animation:twink 3s infinite ease-in-out,drift 15s infinite linear;}
+  @keyframes twink{0%,100%{opacity:.2;}50%{opacity:1;}}
+  @keyframes drift{0%{transform:translateY(20px);}100%{transform:translateY(-30px);}}
+  .page{position:relative;z-index:1;}
+
+  .nav{display:flex;justify-content:space-between;align-items:center;padding:14px 24px;}
+  .logo{font-size:30px;font-weight:bold;text-shadow:0 0 14px rgba(255,255,255,.8);animation:glowLogo 2.2s ease-in-out infinite;}
+  @keyframes glowLogo{0%,100%{text-shadow:0 0 10px rgba(255,255,255,.5);}50%{text-shadow:0 0 22px rgba(129,212,250,1);}}
+  .nav-right{display:flex;gap:12px;align-items:center;font-size:14px;color:#c9dbff;margin-right:80px;}
+  .nav-btn{padding:8px 14px;border-radius:999px;border:none;background:rgba(255,255,255,.15);color:white;cursor:pointer;font-size:13px;}
+  .nav-btn:hover{background:rgba(255,255,255,.25);}
+
+  .main{display:flex;flex-wrap:wrap;gap:20px;padding:0 24px 40px;justify-content:center;align-items:flex-start;}
+  .left-panel{width:300px;display:flex;flex-direction:column;gap:16px;margin-left:-250px;}
+  .feed{margin-left:150px;flex:1;min-width:320px;max-width:650px;}
+
+  .card{background:rgba(255,255,255,.10);border-radius:18px;border:1px solid rgba(255,255,255,.24);padding:14px 16px;backdrop-filter:blur(14px);box-shadow:0 0 24px rgba(0,0,0,.7);font-size:13px;}
+  .card-title{font-size:15px;font-weight:600;margin-bottom:8px;color:#d0e8ff;}
+
+  .post-form input,.post-form select,.post-form textarea{width:100%;padding:8px;border-radius:10px;border:none;margin-top:6px;margin-bottom:6px;background:rgba(255,255,255,.16);color:white;font-size:12px;}
+  .post-form textarea{height:60px;resize:none;}
+
+  .post-btn{width:100%;padding:9px;border-radius:10px;border:none;background:linear-gradient(135deg,#007bff,#4dafff);color:white;font-weight:600;font-size:13px;cursor:pointer;margin-top:4px;}
+  .post-btn:hover{transform:scale(1.02);}
+
+  .small-label{font-size:11px;color:#c9dbff;margin-top:4px;}
+  .suggest-user{margin-top:6px;padding:8px;border-radius:10px;background:rgba(255,255,255,.08);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;}
+  .suggest-user:hover{background:rgba(255,255,255,.18);}
+  .suggest-dp{width:34px;height:34px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.55);}
+  .suggest-dp img{width:100%;height:100%;object-fit:cover;}
+  .suggest-info strong{font-size:13px;}
+  .suggest-info small{font-size:11px;color:#cfe3ff;}
+
+  .leader-item{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;}
+  .leader-rank{font-weight:600;color:#ffda7b;}
+  .event-item{margin-top:6px;font-size:12px;}
+  .event-item small{color:#c9dbff;}
+
+  .welcome{font-size:18px;margin-bottom:10px;color:#d0e8ff;}
+  .feed-controls{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-bottom:10px;font-size:12px;}
+  .feed-controls select{background:rgba(255,255,255,.12);border-radius:999px;border:none;padding:6px 10px;color:#e5eeff;font-size:12px;outline:none;}
+
+  .post-card{background:rgba(255,255,255,.12);border-radius:18px;padding:14px;margin-bottom:16px;backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.22);box-shadow:0 0 18px rgba(0,0,0,.6);}
+  .post-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .post-avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.3);overflow:hidden;}
+  .post-avatar img{width:100%;height:100%;object-fit:cover;}
+
+  .post-user{font-weight:bold;font-size:14px;}
+  .post-meta{font-size:11px;color:#a9c2ff;}
+  .post-title{font-size:15px;font-weight:600;margin-top:4px;}
+  .post-text{font-size:13px;margin-top:4px;color:#f5f7ff;}
+
+  .post-image{width:100%;margin-top:8px;border-radius:14px;max-height:260px;object-fit:cover;}
+  .no-posts{font-size:13px;color:#c9dbff;padding:12px;background:rgba(255,255,255,.10);border-radius:14px;border:1px solid rgba(255,255,255,.18);}
+
+  .post-actions{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:12px;}
+  .post-actions button{border:none;border-radius:999px;padding:5px 10px;font-size:11px;cursor:pointer;background:rgba(255,255,255,.16);color:#f3f6ff;}
+  .post-actions button:hover{background:rgba(255,255,255,.26);}
+  .like-btn.liked{background:rgba(255,100,140,.4);}
+  .likes-count{font-size:11px;color:#ffda7b;}
+  .owner-actions{margin-left:auto;display:flex;gap:6px;}
+  .cert-btn{margin-left:auto;}
+
+  .comments-section{margin-top:8px;border-top:1px solid rgba(255,255,255,.15);padding-top:6px;}
+  .comment-item{font-size:12px;margin-top:4px;}
+  .comment-user{font-weight:600;}
+  .comment-form{display:flex;gap:6px;margin-top:6px;}
+  .comment-form input{flex:1;padding:6px;border-radius:999px;border:none;background:rgba(255,255,255,.14);color:white;font-size:12px;}
+  .comment-form button{border:none;border-radius:999px;padding:5px 10px;font-size:11px;cursor:pointer;background:rgba(255,255,255,.20);color:white;}
+
+  .profile-fab{position:fixed;top:16px;right:16px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.85);box-shadow:0 0 18px rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;}
+  .profile-fab img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+</style>
+
+<script>
+// prevent access if not logged in
+if (localStorage.getItem("acclaimo_logged_in") !== "true") {
+  window.location.href = "login.html";
+}
+</script>
+</head>
+
+<body>
+
+<script>
+// Generate stars
+for(let i=0;i<55;i++){
+  let s=document.createElement("div");
+  s.className="star";
+  s.style.left=Math.random()*100+"%";
+  s.style.top=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*2+"s";
+  document.body.appendChild(s);
+}
+
+/* ---- GLOBAL STATE ---- */
+let currentUser = JSON.parse(localStorage.getItem("acclaimo_current_user") || "{}");
+let posts = [];
+let editingPostId = null;
+let currentFilterCategory = "All";
+let currentSortOrder = "Newest";
+
+/* ---- HELPER: GUID ---- */
+function generateId(){
+  return "p_"+Date.now()+"_"+Math.floor(Math.random()*1e9);
+}
+
+/* ---- NORMALIZE POSTS ---- */
+function normalizePosts(){
+  let changed=false;
+  posts.forEach(p=>{
+    if(!p.id){p.id=generateId();changed=true;}
+    p.likes = Array.isArray(p.likes)?p.likes:[];
+    p.comments = Array.isArray(p.comments)?p.comments:[];
+  });
+  if(changed){
+    localStorage.setItem("acclaimo_posts",JSON.stringify(posts));
+  }
+}
+
+/* ---- START ---- */
+document.addEventListener("DOMContentLoaded",()=>{
+  if(!currentUser || !currentUser.email){window.location.href="login.html";return;}
+  if(!currentUser.profile){window.location.href="profile.html";return;}
+
+  const prof=currentUser.profile;
+  document.getElementById("welcomeText").innerText=`Welcome back, ${prof.name||currentUser.fullName||"Student"}!`;
+
+  const navPic=document.getElementById("navProfImg");
+  if(prof.profilePic)navPic.src=prof.profilePic;
+
+  // load posts
+  posts=JSON.parse(localStorage.getItem("acclaimo_posts")||"[]")||[];
+  normalizePosts();
+
+  renderFeed();
+  loadSuggestions();
+});
+
+/* ---- FEED RENDER ---- */
+function renderFeed(){
+  normalizePosts();
+  const box=document.getElementById("feedBox");
+  box.innerHTML="";
+
+  if(!posts || posts.length===0){
+    box.innerHTML=`<div class="no-posts">No achievements posted yet 🎓</div>`;
+    return;
+  }
+
+  let arr=[...posts];
+
+  if(currentFilterCategory!=="All"){
+    arr=arr.filter(p=>(p.category||"")===currentFilterCategory);
+  }
+
+  if(currentSortOrder==="Newest") arr.sort((a,b)=>b.createdAt-a.createdAt);
+  if(currentSortOrder==="Oldest") arr.sort((a,b)=>a.createdAt-b.createdAt);
+  if(currentSortOrder==="MostLiked") arr.sort((a,b)=>(b.likes.length)-(a.likes.length));
+
+  arr.forEach(p=>{
+    const card=document.createElement("div");
+    card.className="post-card";
+
+    const liked=p.likes.includes(currentUser.username);
+    const avatar=p.userProfilePic?`<img src="${p.userProfilePic}">`:"";
+
+    card.innerHTML=`
+      <div class="post-header">
+        <div class="post-avatar">${avatar}</div>
+        <div>
+          <div class="post-user">@${p.username}</div>
+          <div class="post-meta">
+            ${p.branch||""}
+            ${p.sem?`• ${p.sem}`:""}
+            ${p.category?`• ${p.category}`:""}
+          </div>
+        </div>
+      </div>
+
+      <div class="post-title">${p.title}</div>
+
+      <div class="post-text">
+        ${p.level?`<b>Level:</b> ${p.level}<br>`:""}
+        ${p.date?`<b>Date:</b> ${p.date}<br>`:""}
+        ${p.taggedTeacher?`<b>Teacher:</b> ${p.taggedTeacher}<br><br>`:""}
+        ${p.caption}
+      </div>
+
+      ${p.image?`<img class="post-image" src="${p.image}">`:""}
+
+      <div class="post-actions">
+        <button class="like-btn ${liked?"liked":""}" onclick="toggleLike('${p.id}')">
+          ${liked?"♥️ Liked":"♡ Like"}
+        </button>
+        <button onclick="scrollToComment('${p.id}')">💬 Comment</button>
+        ${p.certificate?`<button class="cert-btn" onclick="openCertificate('${p.id}')">View Certificate</button>`:""}
+
+        <span class="likes-count">${p.likes.length} like${p.likes.length===1?"":"s"}</span>
+
+        ${p.username===currentUser.username?`
+          <div class="owner-actions">
+            <button onclick="startEditPost('${p.id}')">Edit</button>
+            <button onclick="deletePost('${p.id}')">Delete</button>
+          </div>`:""}
+      </div>
+
+      <div class="comments-section">
+        ${p.comments.length===0?`<div class="comment-item" style="color:#c9dbff;">No comments yet ✨</div>`:
+          p.comments.map(c=>`
+            <div class="comment-item">
+              <span class="comment-user">@${c.user}</span>:
+              <span>${c.text}</span>
+            </div>`).join("")
+        }
+        <div class="comment-form">
+          <input type="text" id="c-${p.id}" placeholder="Add a comment...">
+          <button onclick="addComment('${p.id}')">Post</button>
+        </div>
+      </div>
+    `;
+    box.appendChild(card);
+  });
+}
+
+/* ---- FILTER & SORT ---- */
+function changeFilter(){
+  currentFilterCategory=document.getElementById("filterCategory").value;
+  renderFeed();
+}
+function changeSort(){
+  currentSortOrder=document.getElementById("sortOrder").value;
+  renderFeed();
+}
+
+/* ---- LIKE ---- */
+function toggleLike(id){
+  normalizePosts();
+  const found=posts.find(p=>p.id===id);
+  if(!found)return;
+
+  const me=currentUser.username;
+  const idx=found.likes.indexOf(me);
+  if(idx===-1) found.likes.push(me);
+  else found.likes.splice(idx,1);
+
+  localStorage.setItem("acclaimo_posts",JSON.stringify(posts));
+  renderFeed();
+}
+
+/* ---- COMMENTS ---- */
+function addComment(id){
+  normalizePosts();
+  const found=posts.find(p=>p.id===id);
+  if(!found)return;
+
+  const input=document.getElementById(`c-${id}`);
+  if(!input)return;
+
+  const text=input.value.trim();
+  if(!text)return;
+
+  found.comments.push({user:currentUser.username,text,createdAt:Date.now()});
+  input.value="";
+
+  localStorage.setItem("acclaimo_posts",JSON.stringify(posts));
+  renderFeed();
+}
+
+function scrollToComment(id){
+  const input=document.getElementById(`c-${id}`);
+  if(input){
+    input.scrollIntoView({behavior:"smooth",block:"center"});
+    input.focus();
+  }
+}
+
+/* ---- CERTIFICATE ---- */
+function openCertificate(id){
+  const p=posts.find(p=>p.id===id);
+  if(p && p.certificate){
+    window.open(p.certificate,"_blank");
+  }
+}
+
+/* ---- EDIT ---- */
+function startEditPost(id){
+  normalizePosts();
+  const p=posts.find(p=>p.id===id);
+  if(!p)return;
+
+  editingPostId=id;
+
+  document.getElementById("achTitle").value=p.title;
+  document.getElementById("achCategory").value=p.category;
+  document.getElementById("achLevel").value=p.level;
+  document.getElementById("achDate").value=p.date;
+  document.getElementById("achTeacher").value=p.taggedTeacher;
+  document.getElementById("achCaption").value=p.caption;
+
+  document.getElementById("postButton").textContent="Save Changes";
+}
+
+/* ---- DELETE ---- */
+function deletePost(id){
+  if(!confirm("Delete this achievement?"))return;
+  posts=posts.filter(p=>p.id!==id);
+  localStorage.setItem("acclaimo_posts",JSON.stringify(posts));
+  renderFeed();
+}
+
+/* ---- SUGGESTIONS ---- */
+function loadSuggestions(){
+  const all=JSON.parse(localStorage.getItem("acclaimo_users")||"[]");
+  const box=document.getElementById("suggestList");
+
+  const sug=all.filter(u=>u.email!==currentUser.email && u.profile);
+
+  if(sug.length===0){
+    box.innerHTML=`<span style="font-size:12px;color:#c0d4ff;">No suggestions yet 🌠</span>`;
+    return;
+  }
+
+  box.innerHTML="";
+  sug.forEach(u=>{
+    const p=u.profile;
+    box.innerHTML+=`
+      <div class="suggest-user">
+        <div class="suggest-dp">
+          <img src="${p.profilePic||""}">
+        </div>
+        <div class="suggest-info">
+          <strong>@${u.username}</strong>
+          <small>${p.branch||""} ${p.sem?`• ${p.sem}`:""}</small>
+        </div>
+      </div>`;
+  });
+}
+
+/* ---- POST / SAVE ---- */
+function postAchievement(){
+  const title=document.getElementById("achTitle").value.trim();
+  const category=document.getElementById("achCategory").value;
+  const caption=document.getElementById("achCaption").value.trim();
+
+  const level=document.getElementById("achLevel").value;
+  const date=document.getElementById("achDate").value;
+  const teacher=document.getElementById("achTeacher").value.trim();
+
+  const img=document.getElementById("achImage").files[0];
+  const cert=document.getElementById("achCertificate").files[0];
+
+  if(!title||!caption){
+    alert("Enter both Title and Description.");
+    return;
+  }
+
+  const prof=currentUser.profile;
+
+  function readFile(file,cb){
+    if(!file)return cb(null);
+    const r=new FileReader();
+    r.onload=()=>cb(r.result);
+    r.readAsDataURL(file);
+  }
+
+  readFile(img,(imgData)=>{
+  readFile(cert,(certData)=>{
+
+    normalizePosts();
+
+    if(editingPostId){
+      const p=posts.find(p=>p.id===editingPostId);
+      if(p){
+        p.title=title;
+        p.category=category;
+        p.level=level;
+        p.date=date;
+        p.taggedTeacher=teacher;
+        p.caption=caption;
+        p.branch=prof.branch;
+        p.sem=prof.sem;
+
+        if(imgData!==null) p.image=imgData;
+        if(certData!==null) p.certificate=certData;
+      }
+    } else {
+      posts.push({
+        id:generateId(),
+        username:currentUser.username,
+        branch:prof.branch,
+        sem:prof.sem,
+        title,category,caption,level,date,
+        taggedTeacher:teacher,
+        image:imgData||null,
+        certificate:certData||null,
+        userProfilePic:prof.profilePic||null,
+        likes:[],comments:[],
+        createdAt:Date.now()
+      });
+    }
+
+    localStorage.setItem("acclaimo_posts",JSON.stringify(posts));
+    editingPostId=null;
+    document.getElementById("postButton").textContent="Post Achievement";
+
+    document.getElementById("achTitle").value="";
+    document.getElementById("achCategory").value="";
+    document.getElementById("achCaption").value="";
+    document.getElementById("achImage").value="";
+    document.getElementById("achCertificate").value="";
+    document.getElementById("achLevel").value="";
+    document.getElementById("achDate").value="";
+    document.getElementById("achTeacher").value="";
+
+    renderFeed();
+    alert("Achievement saved! 🌟");
+  });
+  });
+}
+
+/* ---- LOGOUT ---- */
+function logout(){
+  localStorage.removeItem("acclaimo_logged_in");
+  localStorage.removeItem("acclaimo_current_user");
+  window.location.href="login.html";
+}
+function goToProfile(){window.location.href="profile.html";}
+</script>
+
+<div class="page">
+  <div class="profile-fab" onclick="goToProfile()">
+    <img id="navProfImg" src="">
+  </div>
+
+  <div class="nav">
+    <div class="logo">Acclaimo</div>
+    <div class="nav-right">
+      <button class="nav-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <div class="left-panel">
+      <div class="card post-form">
+        <div class="card-title">Post an Achievement 🏆</div>
+
+        <div class="small-label">Upload a photo (optional)</div>
+        <input type="file" id="achImage" accept="image/*">
+
+        <div class="small-label">Attach Certificate (optional)</div>
+        <input type="file" id="achCertificate" accept="application/pdf,image/*">
+
+        <div class="small-label">Achievement Title</div>
+        <input type="text" id="achTitle" placeholder="e.g. Won Hackathon">
+
+        <div class="small-label">Category</div>
+        <select id="achCategory">
+          <option value="">Select category</option>
+          <option>Technical</option>
+          <option>Cultural</option>
+          <option>Sports</option>
+          <option>Academic</option>
+          <option>Research</option>
+          <option>Community</option>
+        </select>
+
+        <div class="small-label">Level</div>
+        <select id="achLevel">
+          <option value="">Choose Level</option>
+          <option>College Level</option>
+          <option>Inter-College</option>
+          <option>State Level</option>
+          <option>National</option>
+          <option>International</option>
+        </select>
+
+        <div class="small-label">Date</div>
+        <input type="date" id="achDate">
+
+        <div class="small-label">Tag Class Teacher (optional)</div>
+        <input type="text" id="achTeacher" placeholder="Teacher name or ID">
+
+        <div class="small-label">Short Description</div>
+        <textarea id="achCaption" placeholder="Describe your achievement"></textarea>
+
+        <button id="postButton" class="post-btn" onclick="postAchievement()">Post Achievement</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Suggested Achievers 👥</div>
+        <div id="suggestList" style="font-size:13px;">
+          <span style="color:#c9dbff;">Loading...</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Leaderboard ⚡</div>
+        <div class="leader-item"><span class="leader-rank">#1</span><span>@alexa.ai</span><span>12 Achievements</span></div>
+        <div class="leader-item"><span class="leader-rank">#2</span><span>@rahul.dev</span><span>9 Achievements</span></div>
+        <div class="leader-item"><span class="leader-rank">#3</span><span>@priya.codes</span><span>7 Achievements</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Upcoming Events 📅</div>
+        <div class="event-item"><strong>AI & ML Hackathon</strong><small>Saturday • Hall A</small></div>
+        <div class="event-item"><strong>Paper Presentation</strong><small>Friday • CS Dept</small></div>
+        <div class="event-item"><strong>Cultural Fest Auditions</strong><small>Next Week • Auditorium</small></div>
+      </div>
+    </div>
+
+    <div class="feed">
+      <div class="welcome" id="welcomeText">Welcome back!</div>
+
+      <div class="feed-controls">
+        <span>Filter:</span>
+        <select id="filterCategory" onchange="changeFilter()">
+          <option value="All">All</option>
+          <option>Technical</option>
+          <option>Cultural</option>
+          <option>Sports</option>
+          <option>Academic</option>
+          <option>Research</option>
+          <option>Community</option>
+        </select>
+
+        <span>Sort:</span>
+        <select id="sortOrder" onchange="changeSort()">
+          <option value="Newest">Newest</option>
+          <option value="Oldest">Oldest</option>
+          <option value="MostLiked">Most Liked</option>
+        </select>
+      </div>
+
+      <div id="feedBox"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

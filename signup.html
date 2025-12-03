@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Acclaimo – Sign Up</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle at top, #0a1a3c, #001f54, #003b73, #0a2342);
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 3s infinite ease-in-out, drift 18s linear infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% {opacity: 0.15;}
+    50% {opacity: 1;}
+  }
+  @keyframes drift {
+    0%   { transform: translateY(20px); }
+    100% { transform: translateY(-40px); }
+  }
+
+  .signup-box {
+    width: 350px;
+    padding: 30px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 0 28px rgba(0,0,0,0.6);
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.2);
+    animation: fadeIn 0.8s ease;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(30px);}
+    to   {opacity: 1; transform: translateY(0);}
+  }
+
+  .logo {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    letter-spacing: 1.2px;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin: 10px 0;
+    background: rgba(255,255,255,0.14);
+    color: white;
+  }
+  input::placeholder {
+    color: #bcd4ff;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    margin-top: 10px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #007bff, #4dafff);
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  button:hover {
+    transform: scale(1.03);
+  }
+
+  .bottom-links {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #d0e8ff;
+  }
+  .bottom-links a {
+    color: #ffda7b;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .bottom-links a:hover {
+    text-decoration: underline;
+  }
+
+  /* Username suggestion text */
+  .suggest-box {
+    color: #ffb3c1;
+    font-size: 13px;
+    margin-top: 5px;
+    display: none;
+  }
+</style>
+</head>
+
+<body>
+
+<script>
+for(let i = 0; i < 55; i++){
+  const star = document.createElement("div");
+  star.classList.add("star");
+  star.style.left = Math.random() * 100 + "%";
+  star.style.top = Math.random() * 100 + "%";
+  star.style.animationDelay = Math.random() * 3 + "s";
+  document.body.appendChild(star);
+}
+</script>
+
+<div class="signup-box">
+  <div class="logo">Acclaimo</div>
+
+  <input type="text" id="fullName" placeholder="Full Name">
+  <input type="text" id="username" placeholder="Username" onblur="checkUsername()">
+  <div id="suggestionBox" class="suggest-box"></div>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+
+  <button onclick="handleSignup()">
+    Sign Up
+  </button>
+
+  <div class="bottom-links">
+    Already have an account?
+    <a href="login.html">Login</a>
+  </div>
+</div>
+
+<script>
+let acclaimoUsers = JSON.parse(localStorage.getItem('acclaimo_users') || '[]');
+
+function checkUsername() {
+  const username = document.getElementById('username').value.trim();
+  const suggestBox = document.getElementById('suggestionBox');
+  suggestBox.innerHTML = "";
+  suggestBox.style.display = "none";
+
+  if (!username) return;
+
+  const exists = acclaimoUsers.some(
+    u => u.username.toLowerCase() === username.toLowerCase()
+  );
+
+  if (exists) {
+    let base = document.getElementById('fullName').value.trim().split(" ")[0] || username;
+
+    const suggestions = [
+      base + Math.floor(Math.random()*999),
+      base + "_" + Math.floor(Math.random()*9999),
+      base.slice(0,3) + Math.floor(Math.random()*999)
+    ];
+
+    suggestBox.style.display = "block";
+    suggestBox.innerHTML = 
+      "Username already exists! Try: " + suggestions.join(", ");
+  }
+}
+
+function handleSignup() {
+  const fullName = document.getElementById('fullName').value.trim();
+  const username = document.getElementById('username').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+
+  if (!fullName || !username || !email || !password) {
+    alert("Please fill all fields");
+    return;
+  }
+
+  if (acclaimoUsers.some(
+    u => u.username.toLowerCase() === username.toLowerCase()
+  )) {
+    alert("Username already exists! Choose another.");
+    return;
+  }
+
+  acclaimoUsers.push({ fullName, username, email, password });
+  localStorage.setItem('acclaimo_users', JSON.stringify(acclaimoUsers));
+
+  alert("Signup Successful!");
+  window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>
